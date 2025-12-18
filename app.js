@@ -1,8 +1,5 @@
-// ВАЖНО: поставь сюда URL твоего Worker
+// ВАЖНО: поставь сюда URL твоего Worker (после `wrangler deploy`)
 const API_BASE = "https://romanop435-steam-portfolio.romanop435.workers.dev";
-
-const steamProfileUrl = "https://steamcommunity.com/profiles/76561199065187455/";
-const discordTag = "@romanop435";
 
 let page = 1;
 let perPage = 9;
@@ -11,6 +8,15 @@ const $ = (id) => document.getElementById(id);
 
 function setConsole(line) {
   $("consoleStatus").textContent = `] ${line}`;
+}
+
+function escapeHtml(s) {
+  return String(s ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
 }
 
 function cardTemplate({ title, description, preview_url, url }) {
@@ -48,76 +54,157 @@ function downloadTemplate({ title, description, url }) {
   `;
 }
 
-async function loadProfile() {
-  setConsole("fetching steam profile...");
-  const r = await fetch(`${API_BASE}/api/profile`);
-  if (!r.ok) throw new Error("Profile fetch failed");
-  const data = await r.json();
+function renderAvatar(avatar) {
+  const wrap = document.querySelector(".avatar-wrap");
 
-  $("nickname").textContent = data.personaname || "romanop435";
+  // убираем прошлый img/video
+  const old = wrap.querySelector(".avatar");
+  if (old) old.remove();
 
-  if (data.avatarfull) {
-    $("avatar").src = data.avatarfull;
-  } else {
-    // fallback: просто пустая заглушка (можно заменить локальной картинкой)
-    $("avatar").alt = "avatar not available";
-  }
-
-  setConsole("steam profile loaded");
-}
-
-async function loadWorks() {
-  setConsole(`loading workshop items (page=${page})...`);
-  $("pageNum").textContent = String(page);
-
-  const grid = $("worksGrid");
-  grid.innerHTML = "";
-
-  const r = await fetch(`${API_BASE}/api/workshop?page=${page}&perPage=${perPage}`);
-  if (!r.ok) throw new Error("Workshop fetch failed");
-  const data = await r.json();
-
-  if (!data.items || !data.items.length) {
-    grid.innerHTML = `<div class="mono dim">Нет работ для отображения (или Steam временно ограничил выдачу).</div>`;
-    setConsole("no items");
+  if (!avatar || !avatar.url) {
+    const img = document.createElement("img");
+    img.className = "avatar";
+    img.alt = "avatar";
+    wrap.prepend(img);
     return;
   }
 
-  grid.innerHTML = data.items.map(cardTemplate).join("");
-  setConsole(`loaded ${data.items.length} items`);
+  if (avatar.type === "webm") {
+    const v = document.createElement("video");
+    v.className = "avatar";
+    v.autoplay = true;
+    v.loop = true;
+    v.muted = true;
+    v.playsInline = true;
+    v.src = avatar.url;
+    wrap.prepend(v);
+    return;
+  }
+
+  const img = document.createElement("img");
+  img.className = "avatar";
+  img.alt = "avatar";
+  img.loading = "eager";
+  img.src = avatar.url;
+  wrap.prepend(img);
+}
+
+async function loadSteamBundle() {
+  setConsole(`loading steam bundle (page=${page})...`);
+  const r = await fetch(`${API_BASE}/api/steam?page=${page}&perPage=${perPage}`, { cache: "no-store" });
+  if (!r.ok) throw new Error("Steam API fetch failed");
+  return r.json();
+}
+
+function buildPager(totalPages) {
+  const pager = document.querySelector(".pager");
+  $("pageNum").textContent = String(page);
+
+  const containerId = "pageButtons";
+  let box = document.getElementById(containerId);
+  if (!box) {
+    box = document.createElement("div");
+    box.id = containerId;
+    box.style.display = "flex";
+    box.style.gap = "6px";
+    box.style.flexWrap = "wrap";
+    box.style.justifyContent = "center";
+    pager.insertBefore(box, pager.children[1]); // перед "Page: X"
+  }
+  box.innerHTML = "";
+
+  if (!totalPages || totalPages < 2) return;
+
+  const last = totalPages;
+  const buttons = [];
+
+  const push = (p, label = String(p), active = false) => buttons.push({ p, label, active });
+
+  push(1, "1", page === 1);
+
+  const start = Math.max(2, page - 1);
+  const end = Math.min(last - 1, page + 1);
+
+  if (start > 2) push(null, "…");
+  for (let p = start; p <= end; p++) push(p, String(p), p === page);
+  if (end < last - 1) push(null, "…");
+
+  if (last > 1) push(last, String(last), page === last);
+
+  for (const b of buttons) {
+    const btn = document.createElement("button");
+    btn.className = "btn";
+    btn.textContent = b.label;
+    btn.disabled = b.p === null || b.active;
+    btn.style.opacity = b.active ? "0.75" : "1";
+    btn.addEventListener("click", () => {
+      if (!b.p) return;
+      page = b.p;
+      refresh().catch(err => setConsole(err.message));
+    });
+    box.appendChild(btn);
+  }
 }
 
 async function loadDownloads() {
-  const r = await fetch("./downloads.json");
-  const data = await r.json();
-
   const grid = $("downloadsGrid");
-  grid.innerHTML = data.map(downloadTemplate).join("");
+  grid.innerHTML = "";
+
+  try {
+    const r = await fetch("./downloads.json", { cache: "no-store" });
+    if (!r.ok) throw new Error("downloads.json missing");
+    const data = await r.json();
+
+    if (!Array.isArray(data) || data.length === 0) {
+      grid.innerHTML = `<div class="mono dim">Пока ничего нет.</div>`;
+      return;
+    }
+
+    grid.innerHTML = data.map(downloadTemplate).join("");
+  } catch {
+    grid.innerHTML = `<div class="mono dim">Пока ничего нет.</div>`;
+  }
 }
 
-function escapeHtml(s) {
-  return String(s)
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#039;");
+async function refresh() {
+  const data = await loadSteamBundle();
+
+  // profile
+  $("nickname").textContent = data.profile?.personaname || "romanop435";
+  renderAvatar(data.profile?.avatar);
+
+  // workshop
+  const grid = $("worksGrid");
+  const items = data.workshop?.items || [];
+
+  grid.innerHTML = items.length
+    ? items.map(cardTemplate).join("")
+    : `<div class="mono dim">Работы не найдены или Steam временно ограничил выдачу.</div>`;
+
+  // pagination
+  const totalPages = data.workshop?.totalPages;
+  buildPager(totalPages);
+
+  // arrows
+  $("prevPage").disabled = page <= 1;
+  if (totalPages) $("nextPage").disabled = page >= totalPages;
+
+  setConsole(`loaded items: ${items.length}`);
 }
 
-$("refreshWorks").addEventListener("click", () => loadWorks().catch(err => setConsole(err.message)));
+$("refreshWorks").addEventListener("click", () => refresh().catch(err => setConsole(err.message)));
 $("prevPage").addEventListener("click", () => {
   page = Math.max(1, page - 1);
-  loadWorks().catch(err => setConsole(err.message));
+  refresh().catch(err => setConsole(err.message));
 });
 $("nextPage").addEventListener("click", () => {
   page = page + 1;
-  loadWorks().catch(err => setConsole(err.message));
+  refresh().catch(err => setConsole(err.message));
 });
 
 (async function init() {
   try {
-    await loadProfile();
-    await loadWorks();
+    await refresh();
     await loadDownloads();
   } catch (e) {
     setConsole(e.message || "init error");

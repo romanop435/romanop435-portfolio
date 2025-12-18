@@ -4,8 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>romanop435 | GMod Developer Portfolio</title>
-  <meta name="description" content="Garry's Mod developer portfolio: Steam Workshop addons, downloads, contacts." />
+  <meta name="description" content="Портфолио romanop435: Steam Workshop аддоны, загрузки, контакты." />
+  <meta name="theme-color" content="#080a0d" />
   <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
@@ -17,23 +19,28 @@
     <div class="topbar__inner">
       <div class="profile">
         <div class="avatar-wrap">
-          <img id="avatar" class="avatar" alt="romanop435 avatar" />
+          <!-- сюда JS вставит img или video -->
           <div class="avatar-scan"></div>
         </div>
 
         <div class="profile__meta">
-          <div class="mono dim">Garry's Mod Developer</div>
+          <div class="mono dim">BLACK MESA STYLE UI</div>
           <h1 id="nickname" class="nick">romanop435</h1>
 
           <div class="links">
-            <a class="chip" href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">Steam</a>
-            <a class="chip" href="#contacts">Discord: @romanop435</a>
+            <a class="chip" href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">
+              Steam профиль
+            </a>
+            <a class="chip" href="#contacts">
+              Discord: @romanop435
+            </a>
           </div>
         </div>
       </div>
 
-      <nav class="nav" id="nav">
+      <nav class="nav">
         <a href="#home" class="nav__item">Главная</a>
+        <a href="#about" class="nav__item">О себе</a>
         <a href="#works" class="nav__item">Мои работы</a>
         <a href="#downloads" class="nav__item">Загрузки</a>
         <a href="#contacts" class="nav__item">Контакты</a>
@@ -46,6 +53,9 @@
       <div class="panel__title">:: status</div>
       <div class="panel__body grid2">
         <div>
+          <div class="k">SteamID64</div>
+          <div class="v mono">76561199065187455</div>
+
           <div class="k">Профиль</div>
           <div class="v">
             <a href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">
@@ -58,10 +68,26 @@
         </div>
 
         <div class="console">
-          <div class="console__line">] gmod_portfolio init</div>
-          <div class="console__line">] fetching steam profile...</div>
+          <div class="console__line">] portfolio init</div>
+          <div class="console__line">] steam bundle fetch</div>
           <div class="console__line" id="consoleStatus">] waiting</div>
         </div>
+      </div>
+    </section>
+
+    <section id="about" class="panel appear">
+      <div class="panel__title">:: about / о себе</div>
+      <div class="panel__body">
+        <div class="mono dim">romanop435 • Garry's Mod / GLua</div>
+
+        <p class="p">
+          Разрабатываю под Garry’s Mod (GLua): игровые режимы, UI/HUD, раундовые механики,
+          системы лута/прогрессии, оптимизация серверной логики и интеграции.
+        </p>
+
+        <p class="p dim">
+          Ниже — мои работы в Steam Workshop и раздел загрузок. По вопросам разработки — Discord: @romanop435.
+        </p>
       </div>
     </section>
 
@@ -69,7 +95,7 @@
       <div class="panel__title">:: steam workshop / мои работы</div>
       <div class="panel__body">
         <div class="toolbar">
-          <div class="mono dim">Карточки в стиле spawn-меню</div>
+          <div class="mono dim">Автоподгрузка из Steam Workshop</div>
           <div class="toolbar__right">
             <button class="btn" id="refreshWorks">Обновить</button>
           </div>
@@ -84,7 +110,7 @@
         </div>
 
         <div class="hint mono dim">
-          Если Steam временно ограничит запросы — можно добавить кэширование на стороне Worker.
+          Если Steam временно ограничит выдачу — обнови позже (Worker кэширует ответы).
         </div>
       </div>
     </section>
@@ -92,7 +118,6 @@
     <section id="downloads" class="panel appear">
       <div class="panel__title">:: downloads / загрузки</div>
       <div class="panel__body">
-        <div class="mono dim">Редактируется через <code>downloads.json</code></div>
         <div id="downloadsGrid" class="cards"></div>
       </div>
     </section>
@@ -106,10 +131,13 @@
             <div class="contact__v mono">76561199065187455</div>
           </a>
 
-          <a class="contact" href="https://discord.com" target="_blank" rel="noreferrer">
+          <div class="contact">
             <div class="contact__k">Discord</div>
             <div class="contact__v mono">@romanop435</div>
-          </a>
+            <div class="dim" style="margin-top:8px; font-size:12.5px; line-height:1.45;">
+              Если нужно — добавь инвайт-ссылку сервера или ссылку на профиль.
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -117,11 +145,8 @@
 
   <footer class="footer">
     <div class="footer__console">
-      <div class="footer__line">] links: Steam | Discord</div>
-      <div class="footer__line">
-        ] Steam: <a href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">open</a>
-      </div>
-      <div class="footer__line">] Discord: @romanop435</div>
+      <div class="footer__line">] steam: <a href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">open</a></div>
+      <div class="footer__line">] discord: @romanop435</div>
       <div class="footer__line">© romanop435, 2025</div>
     </div>
   </footer>
