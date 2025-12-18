@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>romanop435 | GMod Developer Portfolio</title>
+  <meta name="description" content="Garry's Mod developer portfolio: Steam Workshop addons, downloads, contacts." />
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar__inner">
+      <div class="profile">
+        <div class="avatar-wrap">
+          <img id="avatar" class="avatar" alt="romanop435 avatar" />
+          <div class="avatar-scan"></div>
+        </div>
+
+        <div class="profile__meta">
+          <div class="mono dim">Garry's Mod Developer</div>
+          <h1 id="nickname" class="nick">romanop435</h1>
+
+          <div class="links">
+            <a class="chip" href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">Steam</a>
+            <a class="chip" href="#contacts">Discord: @romanop435</a>
+          </div>
+        </div>
+      </div>
+
+      <nav class="nav" id="nav">
+        <a href="#home" class="nav__item">Главная</a>
+        <a href="#works" class="nav__item">Мои работы</a>
+        <a href="#downloads" class="nav__item">Загрузки</a>
+        <a href="#contacts" class="nav__item">Контакты</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="home" class="container">
+    <section class="hero panel appear">
+      <div class="panel__title">:: status</div>
+      <div class="panel__body grid2">
+        <div>
+          <div class="k">Профиль</div>
+          <div class="v">
+            <a href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">
+              steamcommunity.com/profiles/76561199065187455
+            </a>
+          </div>
+
+          <div class="k">Контакт</div>
+          <div class="v"><a href="#contacts">Discord: @romanop435</a></div>
+        </div>
+
+        <div class="console">
+          <div class="console__line">] gmod_portfolio init</div>
+          <div class="console__line">] fetching steam profile...</div>
+          <div class="console__line" id="consoleStatus">] waiting</div>
+        </div>
+      </div>
+    </section>
+
+    <section id="works" class="panel appear">
+      <div class="panel__title">:: steam workshop / мои работы</div>
+      <div class="panel__body">
+        <div class="toolbar">
+          <div class="mono dim">Карточки в стиле spawn-меню</div>
+          <div class="toolbar__right">
+            <button class="btn" id="refreshWorks">Обновить</button>
+          </div>
+        </div>
+
+        <div id="worksGrid" class="cards"></div>
+
+        <div class="pager">
+          <button class="btn" id="prevPage">←</button>
+          <div class="mono dim">Page: <span id="pageNum">1</span></div>
+          <button class="btn" id="nextPage">→</button>
+        </div>
+
+        <div class="hint mono dim">
+          Если Steam временно ограничит запросы — можно добавить кэширование на стороне Worker.
+        </div>
+      </div>
+    </section>
+
+    <section id="downloads" class="panel appear">
+      <div class="panel__title">:: downloads / загрузки</div>
+      <div class="panel__body">
+        <div class="mono dim">Редактируется через <code>downloads.json</code></div>
+        <div id="downloadsGrid" class="cards"></div>
+      </div>
+    </section>
+
+    <section id="contacts" class="panel appear">
+      <div class="panel__title">:: contacts</div>
+      <div class="panel__body">
+        <div class="contact-grid">
+          <a class="contact" href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">
+            <div class="contact__k">Steam</div>
+            <div class="contact__v mono">76561199065187455</div>
+          </a>
+
+          <a class="contact" href="https://discord.com" target="_blank" rel="noreferrer">
+            <div class="contact__k">Discord</div>
+            <div class="contact__v mono">@romanop435</div>
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer__console">
+      <div class="footer__line">] links: Steam | Discord</div>
+      <div class="footer__line">
+        ] Steam: <a href="https://steamcommunity.com/profiles/76561199065187455/" target="_blank" rel="noreferrer">open</a>
+      </div>
+      <div class="footer__line">] Discord: @romanop435</div>
+      <div class="footer__line">© romanop435, 2025</div>
+    </div>
+  </footer>
+
+  <script src="./app.js"></script>
+</body>
+</html>
